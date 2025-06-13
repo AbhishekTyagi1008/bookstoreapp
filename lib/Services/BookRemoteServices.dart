@@ -59,4 +59,30 @@ body:book as json
       return null;
     }
   }
+
+  Future<bool> updateBook(Book book) async {
+    var httpClient = http.Client();
+    var url = Uri.parse('http://64.227.179.213:3000/updatebook/${book.id}');
+    var response = await httpClient.put(
+      url,
+      headers: {'Content-Type': 'application/json'},
+      body: json.encode(book.toJson()),
+    );
+    print(response.statusCode);
+    if (response.statusCode == 204 || response.statusCode == 200) {
+      return true;
+    }
+    return false;
+  }
+
+  Future<bool> deleteBook(int id) async {
+    var httpClient = http.Client();
+    var url = Uri.parse('http://64.227.179.213:3000/deletebook/$id');
+    var response = await httpClient.delete(url);
+
+    if (response.statusCode == 204) {
+      return true;
+    }
+    return false;
+  }
 }

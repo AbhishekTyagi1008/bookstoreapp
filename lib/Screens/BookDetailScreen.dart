@@ -1,4 +1,5 @@
 import 'package:bookstoreapp/Models/Book.dart';
+import 'package:bookstoreapp/Screens/BookUpdateScreen.dart';
 import 'package:bookstoreapp/Services/BookRemoteServices.dart';
 import 'package:flutter/material.dart';
 
@@ -35,7 +36,13 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
       backgroundColor: Colors.grey.shade100,
 
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
+        onPressed: () {
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (context) => BookUpdateScreen(book: book!),
+            ),
+          );
+        },
         child: Icon(Icons.edit),
       ),
       appBar: AppBar(
@@ -43,7 +50,14 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
         backgroundColor: Colors.deepPurple,
         foregroundColor: Colors.white,
         elevation: 0,
-        actions: [IconButton(onPressed: () {}, icon: Icon(Icons.delete))],
+        actions: [
+          IconButton(
+            onPressed: () {
+              deleteBook();
+            },
+            icon: Icon(Icons.delete),
+          ),
+        ],
       ),
       body: Visibility(
         visible: isLoaded,
@@ -51,6 +65,26 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
         replacement: Center(child: CircularProgressIndicator()),
       ),
     );
+  }
+
+  deleteBook() async {
+    bool isDeleted = await BookRemoteServices().deleteBook(widget.bookId);
+    if (isDeleted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Book deleted successfully!'),
+          backgroundColor: Colors.green,
+        ),
+      );
+      Navigator.of(context).pop();
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Failed to delet book!'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
   }
 
   Widget ShowBook() {
